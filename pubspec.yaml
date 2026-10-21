@@ -18,6 +18,8 @@ dependencies:
   mobile_scanner: ^5.1.0
   geolocator: ^11.0.0
   record: ^7.1.2
+  flutter_map: ^8.3.2
+  latlong2: ^0.10.1
 
 dev_dependencies:
   flutter_test:

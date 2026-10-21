@@ -74,6 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
+        scrollable: true,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: const [
@@ -82,55 +83,98 @@ class _LoginScreenState extends State<LoginScreen> {
             Text('Xác thực OTP', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Mã OTP 6 chữ số đã được gửi đến địa chỉ:',
-              style: TextStyle(fontSize: 13, color: AppColors.textMuted),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              email.isNotEmpty ? email : 'Email của bạn',
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.primary),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Vui lòng mở hộp thư Gmail để lấy mã xác thực và nhập vào bên dưới:',
-              style: TextStyle(fontSize: 13, color: AppColors.textDark),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _otpController,
-              keyboardType: TextInputType.number,
-              textAlign: TextAlign.center,
-              autofocus: true,
-              maxLength: 6,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 6),
-              decoration: InputDecoration(
-                hintText: '000000',
-                counterText: '',
-                filled: true,
-                fillColor: Colors.grey.shade100,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.blue.shade200),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Mã OTP 6 chữ số đã được gửi đến địa chỉ:',
+                style: TextStyle(fontSize: 13, color: AppColors.textMuted),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                email.isNotEmpty ? email : 'Email của bạn',
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.primary),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                'Mở Gmail lấy mã xác thực và nhập vào:',
+                style: TextStyle(fontSize: 13, color: AppColors.textDark),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _otpController,
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.center,
+                autofocus: true,
+                maxLength: 6,
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 6),
+                decoration: InputDecoration(
+                  hintText: '000000',
+                  counterText: '',
+                  filled: true,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                  fillColor: Colors.grey.shade100,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.blue.shade200),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 6),
-            const Center(
-              child: Text(
-                'Kiểm tra cả hộp thư Spam / Thư rác nếu chưa thấy thư',
-                style: TextStyle(fontSize: 11, color: Colors.grey),
+              const SizedBox(height: 6),
+              if (devOtp.isNotEmpty) ...[
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.shade50,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.amber.shade400),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.verified_user_rounded, color: Colors.orange, size: 18),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          'Mã OTP: $devOtp',
+                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.brown, fontSize: 13),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          _otpController.text = devOtp;
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Text(
+                            'Điền nhanh',
+                            style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              const SizedBox(height: 6),
+              const Center(
+                child: Text(
+                  'Kiểm tra cả hộp thư Spam / Thư rác nếu chưa thấy thư',
+                  style: TextStyle(fontSize: 11, color: Colors.grey),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         actions: [
           TextButton(

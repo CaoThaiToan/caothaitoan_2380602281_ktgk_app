@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
@@ -33,15 +34,21 @@ class ApiClient {
     final headers = await _getHeaders();
     final currentBase = baseUrl;
     try {
-      final res = await call('$currentBase$endpoint', headers).timeout(const Duration(seconds: 4));
+      // Tăng timeout lên 35 giây để đợi Render khởi động từ trạng thái ngủ (Spin-down)
+      final res = await call('$currentBase$endpoint', headers).timeout(const Duration(seconds: 35));
       return res;
+    } on TimeoutException {
+      throw Exception('Máy chủ Cloud đang thức dậy (mất 20-30s ở lần đầu). Bạn hãy bấm Đăng nhập lại ngay nhé!');
     } catch (_) {
-      // Nếu máy thật không gọi được 10.0.2.2, tự động chuyển sang localhost:5242 (hỗ trợ adb reverse)
-      final altBase = currentBase.contains('10.0.2.2')
-          ? currentBase.replaceAll('10.0.2.2', 'localhost')
-          : currentBase.replaceAll('localhost', '10.0.2.2');
-      _resolvedBaseUrl = altBase;
-      return await call('$altBase$endpoint', headers);
+      // Nếu dùng local mà không gọi được 10.0.2.2, tự động chuyển sang localhost (hỗ trợ adb reverse)
+      if (currentBase.contains('10.0.2.2') || currentBase.contains('localhost')) {
+        final altBase = currentBase.contains('10.0.2.2')
+            ? currentBase.replaceAll('10.0.2.2', 'localhost')
+            : currentBase.replaceAll('localhost', '10.0.2.2');
+        _resolvedBaseUrl = altBase;
+        return await call('$altBase$endpoint', headers);
+      }
+      rethrow;
     }
   }
 

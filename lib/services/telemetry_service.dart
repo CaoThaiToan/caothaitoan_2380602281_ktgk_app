@@ -30,6 +30,7 @@ class TelemetryService {
       'isFallDetected': isFallDetected,
       'isSosTriggered': isSosTriggered,
       'alertMessage': alertMessage,
+      'sosMessage': alertMessage,
     });
 
     if (response.statusCode == 201 || response.statusCode == 200) {
